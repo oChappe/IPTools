@@ -12,8 +12,7 @@ int main(int argc, char *argv[])
 
     algo = new Butterworth;
     cv::Mat in = cv::imread("C:\\Users\\oliyo_000\\Pictures\\2013.08.26 Vacances\\DSC_0545.jpg", CV_LOAD_IMAGE_COLOR);
-    cv::imshow( "Display window", in );
-    cv::waitKey(0);
+
     cv::Mat out;
     algo->Process(in, out);
 
