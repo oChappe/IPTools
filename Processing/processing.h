@@ -6,6 +6,8 @@
 #ifndef PROCESSING_H
 #define PROCESSING_H
 
+#include <opencv2/opencv.hpp>
+
 class Processing
 {
 public:
