@@ -40,6 +40,7 @@ void Butterworth::Process(cv::Mat in, cv::Mat out)
 
     cv::Mat gray;
     cv::cvtColor(in, gray, CV_BGR2GRAY);
+    cv::imshow("gray", gray);
     std::cout << "smeuh = " << gray.channels() << std::endl;
 //    cv::imshow("gray", gray);
 
@@ -72,8 +73,18 @@ void Butterworth::Process(cv::Mat in, cv::Mat out)
 
     cv::Mat planesFFT[2];
     split(fft, planesFFT);
-    cv::imshow("planesFFT 0", planesFFT[0]);
-    cv::imshow("planesFFT 1", planesFFT[1]);
+//    cv::imshow("planesFFT 0", planesFFT[0]);
+//    cv::imshow("planesFFT 1", planesFFT[1]);
+
+    // http://sparis.free.fr/Cours_Multimedia/TP0.pdf
+    // page 3
+    cv::Mat imFreq, p0, p1;
+    cv::pow(planesFFT[0], 2, p0);
+    cv::pow(planesFFT[1], 2, p1);
+    cv::sqrt(p0+p1,imFreq);
+    imFreq.convertTo(imFreq, CV_8U, 1/255.);
+    cv::imshow("imFreq", imFreq);
+
 cv::waitKey(0);
     return;
 
