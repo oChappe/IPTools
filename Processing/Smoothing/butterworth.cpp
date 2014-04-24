@@ -5,63 +5,21 @@ Butterworth::Butterworth()
 }
 
 
-void Butterworth::Process(cv::Mat in, cv::Mat out)
+void Butterworth::ApplyAlgo(const cv::Mat &in, cv::Mat *out)
 {
-    /*
-    std::cout << "\nCV_8UC3 = " << CV_8UC3 << std::endl;
-    std::cout << "channels = " << in.channels() << std::endl;
-    std::cout << "type = " << in.type() << std::endl;
+    cv::imshow("in", in);
 
-//    cv::Mat in2;
-//    in.convertTo(in2, CV_32FC3);
-//    std::cout << "channels = " << in.channels() << std::endl;
-//    std::cout << "type = " << in.type() << std::endl;
-
-//    cv::imshow("in", in);
-//    cv::imshow("in2", in2);
-//    cv::waitKey(0);
-
-    cv::Mat planesIn[3];
-    split(in, planesIn);
-    cv::Mat planesOut[3];
-    for(int i=0; i<3; ++i)
-    {
-        planesIn[i].convertTo(planesIn[i], CV_32F, 1/255.0);
-
-        dft(planesIn[i], planesOut[i]);
-        idft(planesOut[i], planesOut[i]);
-
-        cv::imshow("planesIn[i]", planesIn[i]);
-        cv::imshow("planesOut[i]", planesOut[i]);
-        cv::waitKey(0);
+//    double mini, maxi;
+//    cv::minMaxIdx(in, &mini, &maxi);
+//    std::cout << "in mini = " << mini << std::endl;
+//    std::cout << "in maxi = " << maxi << std::endl;
 
 
-    }*/
-
-    cv::Mat gray;
-    cv::cvtColor(in, gray, CV_BGR2GRAY);
-    cv::imshow("gray", gray);
-    std::cout << "smeuh = " << gray.channels() << std::endl;
-//    cv::imshow("gray", gray);
-
-//    cv::Size dftSize;
-//    // calculate the size of DFT transform
-//    dftSize.width = cv::getOptimalDFTSize(gray.cols);
-//    dftSize.height = cv::getOptimalDFTSize(gray.rows);
-//    // allocate temporary buffers and initialize them with 0's
-//    cv::Mat temp(dftSize, gray.type(), cv::Scalar::all(0));
-//    // copy to the top-left corners of temp
-//    cv::Mat roi(temp, cv::Rect(0,0,gray.cols,gray.rows));
-//    gray.copyTo(roi);
-//    // use "nonzeroRows" hint for faster processing
-//    dft(temp, temp, 0, gray.rows); erreur sur dft
-//    cv::imshow("temp dft", temp);
-
-    int M = cv::getOptimalDFTSize( gray.rows );
-    int N = cv::getOptimalDFTSize( gray.cols );
+    int M = cv::getOptimalDFTSize( in.rows );
+    int N = cv::getOptimalDFTSize( in.cols );
 
     cv::Mat padded;
-    cv::copyMakeBorder(gray, padded, 0, M - gray.rows, 0, N - gray.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
+    cv::copyMakeBorder(in, padded, 0, M - in.rows, 0, N - in.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
     cv::Mat planes[2];
     planes[0] = cv::Mat_<float>(padded);
     planes[1] = cv::Mat::zeros(padded.size(), CV_32F);
@@ -71,10 +29,24 @@ void Butterworth::Process(cv::Mat in, cv::Mat out)
     // do the DFT
     dft(fft, fft);
 
+//    cv::minMaxIdx(fft, &mini, &maxi);
+//    std::cout << "fft mini = " << mini << std::endl;
+//    std::cout << "fft maxi = " << maxi << std::endl;
+
     cv::Mat planesFFT[2];
     split(fft, planesFFT);
 //    cv::imshow("planesFFT 0", planesFFT[0]);
 //    cv::imshow("planesFFT 1", planesFFT[1]);
+
+
+//    cv::minMaxIdx(planesFFT[0], &mini, &maxi);
+//    std::cout << "real mini = " << mini << std::endl;
+//    std::cout << "real maxi = " << maxi << std::endl;
+
+//    cv::minMaxIdx(planesFFT[1], &mini, &maxi);
+//    std::cout << "imag mini = " << mini << std::endl;
+//    std::cout << "imag maxi = " << maxi << std::endl;
+
 
     // http://sparis.free.fr/Cours_Multimedia/TP0.pdf
     // page 3
@@ -83,54 +55,39 @@ void Butterworth::Process(cv::Mat in, cv::Mat out)
     cv::pow(planesFFT[1], 2, p1);
     cv::sqrt(p0+p1,imFreq);
     imFreq.convertTo(imFreq, CV_8U, 1/255.);
+
+    // shift
+    int cx = imFreq.cols/2;
+    int cy = imFreq.rows/2;
+    cv::Mat q0(imFreq, cv::Rect(0, 0, cx, cy));
+    cv::Mat q1(imFreq, cv::Rect(cx, 0, cx, cy));
+    cv::Mat q2(imFreq, cv::Rect(0, cy, cx, cy));
+    cv::Mat q3(imFreq, cv::Rect(cx, cy, cx, cy));
+    cv::Mat temp;
+    q0.copyTo(temp);
+    q3.copyTo(q0);
+    temp.copyTo(q3);
+    q1.copyTo(temp);
+    q2.copyTo(q1);
+    temp.copyTo(q2);
+
     cv::imshow("imFreq", imFreq);
 
-cv::waitKey(0);
-    return;
 
-    cv::Mat planesIn[3];
-    split(in, planesIn);
-    cv::Mat planesOut[3];
-    for(int i=0; i<3; ++i)
-    {
-        planesIn[i].convertTo(planesIn[i], CV_32F, 1/255.0);
-        cv::imshow("planesIn[i]", planesIn[i]);
+//    cv::dft(planesIn[i], fft, cv::DFT_SCALE|cv::DFT_COMPLEX_OUTPUT);
+    cv::dft(fft, *out, cv::DFT_INVERSE|cv::DFT_REAL_OUTPUT);
 
-        //
-        cv::Size dftSize;
-        // calculate the size of DFT transform
-        dftSize.width = cv::getOptimalDFTSize(planesIn[i].cols);
-        dftSize.height = cv::getOptimalDFTSize(planesIn[i].rows);
-        // allocate temporary buffers and initialize them with 0's
-        cv::Mat temp(dftSize, planesIn[i].type(), cv::Scalar::all(0));
-        // copy to the top-left corners of temp
-        cv::Mat roi(temp, cv::Rect(0,0,planesIn[i].cols,planesIn[i].rows));
-        planesIn[i].copyTo(roi);
-        // use "nonzeroRows" hint for faster processing
-        dft(temp, temp, 0, planesIn[i].rows);
-        cv::imshow("temp", temp);
-        //
+    std::cout << "\nfft type = " << fft.type() << std::endl;
+    std::cout << "fft channels = " << fft.channels() << std::endl;
+    std::cout << "fft rows = " << fft.rows << std::endl;
+    std::cout << "fft cols = " << fft.cols << std::endl;
 
-        cv::Mat fft;
-        cv::dft(planesIn[i], fft, cv::DFT_SCALE|cv::DFT_COMPLEX_OUTPUT);
+    std::cout << "\nout type = " << out->type() << std::endl;
+    std::cout << "out channels = " << out->channels() << std::endl;
+    std::cout << "out rows = " << out->rows << std::endl;
+    std::cout << "out cols = " << out->cols << std::endl;
 
-        cv::Mat planes[2];
-        split(fft, planes);
-
-        planes[0].convertTo(planes[0], CV_8U);
-        cv::imshow("planes[0]", planes[0]);
-
-        planes[1].convertTo(planes[1], CV_8U);
-        cv::imshow("planes[1]", planes[1]);
-
-        cv::dft(fft, planesOut[i], cv::DFT_INVERSE|cv::DFT_REAL_OUTPUT);
-        cv::imshow("planesOut[i]", planesOut[i]);
-
-        cv::waitKey(0);
-    }
-    merge(planesOut, 3, out);
-
-//    cv::imshow("in", in);
-//    cv::imshow("out", out);
 //    cv::waitKey(0);
+
+
 }

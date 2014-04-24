@@ -8,7 +8,8 @@ class Butterworth : public Smoothing
 public:
     Butterworth();
 
-    void Process(cv::Mat in, cv::Mat out);
+protected:
+    void ApplyAlgo(const cv::Mat &in, cv::Mat *out);
 };
 
 #endif // BUTTERWORTH_H
