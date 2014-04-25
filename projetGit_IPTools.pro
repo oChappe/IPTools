@@ -10,7 +10,8 @@ SOURCES += \
     main.cpp \
     Processing/processing.cpp \
     Processing/Smoothing/smoothing.cpp \
-    Processing/Smoothing/butterworth.cpp
+    Processing/Smoothing/butterworth.cpp \
+    dft_algo.cpp
 
 OTHER_FILES += \
     Notes.txt \
@@ -19,4 +20,5 @@ OTHER_FILES += \
 HEADERS += \
     Processing/processing.h \
     Processing/Smoothing/smoothing.h \
-    Processing/Smoothing/butterworth.h
+    Processing/Smoothing/butterworth.h \
+    dft_algo.h
