@@ -5,17 +5,17 @@ Processing::Processing()
 }
 
 
-void Processing::Process(const cv::Mat &in, cv::Mat *out)
+void Processing::process(const cv::Mat &in, cv::Mat *out)
 {
     cv::imshow("Process in", in);
-    int method = 1;
+    int method = 2;
 
     if( method == 1 )
     {
         // convert in gray color
         cv::Mat gray;
         cv::cvtColor(in, gray, CV_BGR2GRAY);
-        ApplyAlgo(gray, out);
+        applyAlgo(gray, out);
     }
     else if( method == 2 )
     {
@@ -30,7 +30,7 @@ void Processing::Process(const cv::Mat &in, cv::Mat *out)
 //        }
         for(int i=0; i<nbC; ++i)
         {
-            ApplyAlgo(planesIn[i], &planesOut[i]);
+            applyAlgo(planesIn[i], &planesOut[i]);
         }
         merge(planesOut, *out);
     }

@@ -11,7 +11,8 @@ SOURCES += \
     Processing/processing.cpp \
     Processing/Smoothing/smoothing.cpp \
     Processing/Smoothing/butterworth.cpp \
-    dft_algo.cpp
+    dft_algo.cpp \
+    Processing/Smoothing/laplacian.cpp
 
 OTHER_FILES += \
     Notes.txt \
@@ -21,4 +22,5 @@ HEADERS += \
     Processing/processing.h \
     Processing/Smoothing/smoothing.h \
     Processing/Smoothing/butterworth.h \
-    dft_algo.h
+    dft_algo.h \
+    Processing/Smoothing/laplacian.h

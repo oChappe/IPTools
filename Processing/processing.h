@@ -18,7 +18,7 @@ public:
      * \param in : image to treat (do not modify)
      * \param out : result image
      */
-    void Process(const cv::Mat &in, cv::Mat *out);
+    void process(const cv::Mat &in, cv::Mat *out);
 
 protected:
     /*!
@@ -26,7 +26,7 @@ protected:
      * \param in : 1 channel only
      * \param out
      */
-    virtual void ApplyAlgo(const cv::Mat &in, cv::Mat *out) = 0;
+    virtual void applyAlgo(const cv::Mat &in, cv::Mat *out) = 0;
 };
 
 #endif // PROCESSING_H

@@ -1,7 +1,7 @@
 #include "dft_algo.h"
 
 
-void ShiftDFT(cv::Mat *in)
+void shiftDFT(cv::Mat *in)
 {
     // divide image in 4 quadrants
     int cx = in->cols/2;
@@ -21,7 +21,7 @@ void ShiftDFT(cv::Mat *in)
 }
 
 
-void CreateOptimalImageForDFT(const cv::Mat &in, cv::Mat *out)
+void createOptimalImageForDFT(const cv::Mat &in, cv::Mat *out)
 {
     // create image with optimal size (add 0 on the boarders)
     int M = cv::getOptimalDFTSize(in.rows);
@@ -34,15 +34,15 @@ void CreateOptimalImageForDFT(const cv::Mat &in, cv::Mat *out)
 }
 
 
-void ComputeSpectre(const cv::Mat &in, cv::Mat *out)
+void computeSpectre(const cv::Mat &in, cv::Mat *out)
 {
     std::vector<cv::Mat> planes;
     split(in, planes);
-    ComputeSpectre(planes, out);
+    computeSpectre(planes, out);
 }
 
 
-void ComputeSpectre(const std::vector<cv::Mat> &in, cv::Mat *out)
+void computeSpectre(const std::vector<cv::Mat> &in, cv::Mat *out)
 {
     // out = sqrt( real^2 + complex^2 )
     cv::sqrt( in[0].mul(in[0]) + in[1].mul(in[1]) , *out);

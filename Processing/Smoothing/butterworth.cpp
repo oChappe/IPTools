@@ -8,16 +8,16 @@ Butterworth::Butterworth(float wc, float n) :
 }
 
 
-void Butterworth::ApplyAlgo(const cv::Mat &in, cv::Mat *out)
+void Butterworth::applyAlgo(const cv::Mat &in, cv::Mat *out)
 {
     cv::imshow("in", in);
 
     // create optimal image size
     cv::Mat fft;
-    CreateOptimalImageForDFT(in, &fft);
+    createOptimalImageForDFT(in, &fft);
     // compute DFT
     dft(fft, fft);
-    ShiftDFT(&fft);
+    shiftDFT(&fft);
 
     // display spectre
 //    cv::Mat spectre;
@@ -27,10 +27,10 @@ void Butterworth::ApplyAlgo(const cv::Mat &in, cv::Mat *out)
 
     // update filter
     if( fft.size() != lawpass.size() )
-        CreateLowPassFilter(fft.size());
+        createLowPassFilter(fft.size());
     // compute
     cv::mulSpectrums(fft, lawpass, fft, cv::DFT_COMPLEX_OUTPUT);
-    ShiftDFT(&fft);
+    shiftDFT(&fft);
 
 //    // display spectre
 //    ComputeSpectre(fft, &spectre);
@@ -49,7 +49,7 @@ void Butterworth::ApplyAlgo(const cv::Mat &in, cv::Mat *out)
 }
 
 
-void Butterworth::CreateLowPassFilter(const cv::Size &size)
+void Butterworth::createLowPassFilter(const cv::Size &size)
 {
     int cc = size.width / 2;
     int cr = size.height / 2;
