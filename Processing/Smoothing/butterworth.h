@@ -24,7 +24,7 @@ private:
     void createLowPassFilter(const cv::Size &size);
 
     //! filter matrix to apply to the fft image
-    cv::Mat lawpass;
+    cv::Mat m_lawpass;
 
     //! cutoff frequency
     float m_wc;

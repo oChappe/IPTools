@@ -26,10 +26,10 @@ void Butterworth::applyAlgo(const cv::Mat &in, cv::Mat *out)
 //    cv::imshow("spectre fft", spectre);
 
     // update filter
-    if( fft.size() != lawpass.size() )
+    if( fft.size() != m_lawpass.size() )
         createLowPassFilter(fft.size());
     // compute
-    cv::mulSpectrums(fft, lawpass, fft, cv::DFT_COMPLEX_OUTPUT);
+    cv::mulSpectrums(fft, m_lawpass, fft, cv::DFT_COMPLEX_OUTPUT);
     shiftDFT(&fft);
 
 //    // display spectre
@@ -67,5 +67,5 @@ void Butterworth::createLowPassFilter(const cv::Size &size)
         }
     }
     std::vector<cv::Mat> im2(2, im);
-    cv::merge(im2, lawpass);
+    cv::merge(im2, m_lawpass);
 }
